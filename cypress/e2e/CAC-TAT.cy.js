@@ -78,7 +78,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('button[type="submit"]')
       .click()
   })
-  it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function(){
+  it.only('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function(){
         
     cy.get('input[id="firstName"]')
       .should('be.visible')
@@ -101,7 +101,8 @@ describe('Central de Atendimento ao Cliente TAT', function() {
       .type('Teste')
 
     cy.get('input[id="phone-checkbox"]')
-      .click()
+      .check()
+      .should('be.checked')
 
     cy.get('button[type="submit"]')
       .click()
@@ -135,13 +136,43 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.contains('strong', 'Mensagem enviada com sucesso.')
       .should('be.visible');
   })
-//Aula 3: 
-  it.only('Utilizar o Select', () => {
-    cy.get('select').select('Cursos').should('have.value', 'cursos') //Seleção pelo texto
-    //cy.get('select').select('youtube') //Seleção pelo value youtube
-    //cy.get('select').select(1) //Seleção pelo índice 1
+//Aula 3: Selecionando opções em campos de seleção suspensa
+  it('Utilizar o Select', () => {
+    //cy.get('select')
+    //  .select('Cursos')
+    //  .should('have.value', 'cursos') //Seleção pelo texto que o usuario vê
+    //cy.get('select')
+    //  .select('blog')
+    //  .should('have.value', 'blog')  //Seleção pelo value 
+    cy.get('select')
+      .select(3)
+      .should('have.value', 'mentoria') //Seleção pelo índice 1(posicao)
 
     //Se o select for de multiplas escolhasm deverá ser listado-os em um array
+  })
+//Aula 4: Marcando inputs tipo Radio
+  it('marca o tipo de atendimento "Feedback"', () => {
+    cy.get('input[type="radio"][value="feedback"]')
+      .check()
+      .should('be.checked') //para falhar colocar not.be.checked
+  })
+  it('Marca cada tipo de atendimento', () => {
+    cy.get('input[type="radio"]')
+      .each(type0fService => {
+        cy.wrap(type0fService)
+        .check()
+        .should('be.checked')
+      })
+      //.should('be.checked') //para falhar colocar not.be.checked
+  })
+//Aula5: Marcando e Desmarcando campos do tipo caixa de seleção
+  it('marca ambos checkboxes, depois desmarca o último', () => {
+    cy.get('input[type="checkbox"]')
+      .check()
+      .should('be.checked')
+      .last() //pega o ultimo
+      .uncheck()
+      .should('not.be.checked')
   })
 }) 
 
