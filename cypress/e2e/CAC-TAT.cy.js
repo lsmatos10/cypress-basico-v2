@@ -78,7 +78,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('button[type="submit"]')
       .click()
   })
-  it.only('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function(){
+  it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function(){
         
     cy.get('input[id="firstName"]')
       .should('be.visible')
@@ -112,7 +112,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
 
       })
 
-  it('preenche e limpa os campos nome, sobrenome, email e telefone', function(){
+  it('preenche e limpa os campos nome, sobrenome, email e telefone', () => {
     cy.get('input[id="firstName"]')
       .should('be.visible')
       .type('Leonardo')
@@ -173,6 +173,35 @@ describe('Central de Atendimento ao Cliente TAT', function() {
       .last() //pega o ultimo
       .uncheck()
       .should('not.be.checked')
+  })
+
+  //Aula 7: Fazendo upload de arquivos
+  it('Seleciona um arquivo da pasta fixtures', () => {
+    cy.fillMandatoryFieldsAndSubmit()
+
+    cy.get('input[id="file-upload"]')
+      .selectFile('cypress/fixtures/example.json')
+      .should(input => {
+          //console.log(input[0].files[0].name)
+          expect(input[0].files[0].name).to.equal('example.json')
+      })
+  })
+  it('Seleciona um arquivo simulando um drag-and-drop "Arrastando arquivo"', () => {
+    cy.fillMandatoryFieldsAndSubmit()
+
+    cy.get('input[id="file-upload"]')
+      .selectFile('cypress/fixtures/example.json', { action: 'drag-drop'}) //drag-drop o sistema estaria arrastando
+      .should(input => {
+          expect(input[0].files[0].name).to.equal('example.json')
+      })
+  })
+  it(' Seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', () => {
+    cy.fixture('example.json').as('sampleFile') //Arquivo fica encadeado
+    cy.get('input[id="file-upload"]')
+      .selectFile('@sampleFile')
+      .should(input => {
+          expect(input[0].files[0].name).to.equal('example.json')
+      })
   })
 }) 
 
