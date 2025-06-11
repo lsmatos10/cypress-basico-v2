@@ -1,10 +1,27 @@
 name: End-to-end tests
+
 on: [push]
+
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Cypress run
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Cypress installation
+        run: npx cypress verify
+
+      - name: Run Cypress tests
         uses: cypress-io/github-action@v2
+        with:
+          config-file: cypress.config.js  # ← garante que usa a nova config
