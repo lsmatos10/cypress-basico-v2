@@ -38,7 +38,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         
   })
 
-  it.only('EXIBE MENSAGEM DE ERRO COM EMAIL INVALIDO', function(){
+  it('EXIBE MENSAGEM DE ERRO COM EMAIL INVALIDO', function(){
     cy.get('input[id="firstName"]')
       .should('be.visible')
       .type('Leonardo')
