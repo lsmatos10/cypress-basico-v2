@@ -22,6 +22,6 @@ jobs:
         run: npx cypress verify
 
       - name: Run Cypress tests
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v6
         with:
           config-file: cypress.config.js  # ← garante que usa a nova config
