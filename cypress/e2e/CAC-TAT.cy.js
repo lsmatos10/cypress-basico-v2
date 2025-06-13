@@ -7,7 +7,10 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.title().should('be.equal', 'Central de Atendimento ao Cliente TAT')
   })
   it('Preenche os campos obrigatórios', function(){
+    cy.clock()
+
     const longText = Cypress._.repeat('abcdefghijklmnoepqrstuvwxyz')
+    
     cy.get('input[id="firstName"]')
       .should('be.visible')
       .type('Leonardo')
@@ -32,13 +35,20 @@ describe('Central de Atendimento ao Cliente TAT', function() {
       .click()
 
   
-    //cy.contains('strong', 'Mensagem enviada com sucesso.')
-    // .should('be.visible');
+    cy.contains('strong', 'Mensagem enviada com sucesso.')
+      .should('be.visible');
+
+    cy.tick(3000) // Aqui foi adiantado 3 segundos, e logo abaixo foi feito a verificação que a mensagem nao aparece mais
+
+    cy.get('.success')
+      .should('not.be.visible')
 
         
   })
 
   it('EXIBE MENSAGEM DE ERRO COM EMAIL INVALIDO', function(){
+    cy.clock() 
+      
     cy.get('input[id="firstName"]')
       .should('be.visible')
       .type('Leonardo')
@@ -64,6 +74,10 @@ describe('Central de Atendimento ao Cliente TAT', function() {
 
     cy.contains('strong', 'Valide os campos obrigatórios!').should('be.visible');
 
+    cy.tick(3000)
+
+    cy.get('.error').should('not.be.visible')
+
 
   })
     it('Valide o campo telefone, só aceite numero ', function(){
@@ -79,7 +93,8 @@ describe('Central de Atendimento ao Cliente TAT', function() {
       .click()
   })
   it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function(){
-        
+    cy.clock()
+
     cy.get('input[id="firstName"]')
       .should('be.visible')
       .type('Leonardo')
@@ -109,6 +124,11 @@ describe('Central de Atendimento ao Cliente TAT', function() {
 
     cy.contains('strong', 'Valide os campos obrigatórios!')
       .should('be.visible');
+
+    cy.tick(3000)
+
+    cy.contains('strong', 'Valide os campos obrigatórios!')
+      .should('not.be.visible');
 
       })
 
@@ -216,6 +236,44 @@ describe('Central de Atendimento ao Cliente TAT', function() {
 
       cy.contains('h1', 'CAC TAT - Política de privacidade')
         .should('be.visible')
+  })
+
+  it('exibe e esconde as mensagens de sucesso e erro usando o .invoke', () => {
+    cy.get('.success')
+      .should('not.be.visible')
+      .invoke('show') // Com o comando .invoke('show'), você pode forçar a exibição de um elemento HTML que esteja escondido, com um estilo display: none;, por exemplo.
+      .should('be.visible')
+      .and('contain', 'Mensagem enviada com sucesso.')
+      .invoke('hide') // com o comando .invoke('hide'), você pode esconder um elemento que está sendo exibido.
+      .should('not.be.visible')
+    cy.get('.error')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Valide os campos obrigatórios!')
+      .invoke('hide')
+      .should('not.be.visible')
+  })
+
+  it('Quality Assurance Analyst | Test Automation', () => {
+    cy.get('#open-text-area')
+      .invoke('val', 'Um texto qualquer')
+      .should('have.value', 'Um texto qualquer')
+  })
+
+  it('faz uma requisição HTTP', () => {
+    cy.request('https://cac-tat.s3.eu-central-1.amazonaws.com/index.html')
+      .as('getRequest')
+      .its('status')
+      .should('be.equal', 200)
+
+    cy.get('@getRequest')
+      .its('statusText')
+      .should('be.equal', 'OK')
+
+    cy.get('@getRequest')
+    .its('body')
+    .should('include', 'CAC TAT')
   })
 }) 
 
