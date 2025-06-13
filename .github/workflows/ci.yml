@@ -1,32 +1,14 @@
 name: End-to-end tests
-
-on: [push]
-
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install dependencies with retry
-        run: |
-          for i in {1..3}; do
-            npm ci && break
-            echo "npm ci failed, retrying in 10s ($i)..."
-            sleep 10
-          done
-
-      - name: Verify Cypress installation
-        run: npx cypress verify
-
-      - name: Run Cypress tests
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cypress run
         uses: cypress-io/github-action@v6
-        with:
-          config-file: cypress.config.js
+        env: 
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          with: 
+            command: npm run test:cloud
